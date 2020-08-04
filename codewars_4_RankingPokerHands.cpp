@@ -4,7 +4,7 @@
 #include <iostream>
 
 enum class HandCategories{
-    StraightFlush=0,
+    StraightFlush,
     FourOfKind,
     FullHouse,
     Flush,
@@ -24,11 +24,11 @@ private:
     int most_numerous_kind;
     int second_numerous_kind;
     bool flush=true;
-    bool straight=true;   
+    bool straight=true;  
+    HandCategories category; 
     HandCategories setCategory();     
  
 public:
-HandCategories category; 
   PokerHand (const char* pokerhand) {
 
     for (int i=0;i<5;i++){
@@ -99,10 +99,6 @@ HandCategories category;
 
 
   }
-
-  //HandCategories getCategory(){
-  //  return category;
-  //} 
      
 };
 
@@ -148,16 +144,7 @@ HandCategories PokerHand::setCategory(){
 enum class Result { Win, Loss, Tie };
 
 Result compare (const PokerHand &player, const PokerHand &opponent) {
-  if ((static_cast<int>(player.category))<(static_cast<int>(opponent.category))){
-    return Result::Win;
-  }
-
-    if ((static_cast<int>(player.category))>(static_cast<int>(opponent.category))){
-    return Result::Loss;
-  }
-
-  return Result::Tie;
-
+  return Result::Loss;
 }
 
 
@@ -174,23 +161,23 @@ bool run_test (const char *player, const char *opponent, Result outcome) {
 int main (){
 //Describe (compare_poker_hands) {
 //  It (should_pass_all_the_tests_provided) {
-//  assert(run_test ("2H 2H 2H 5H 5H", "KS AS TS QS JS", Result::Loss)); //add
-// assert(run_test ("2H 2H 4H 4H 6H", "KS AS TS QS JS", Result::Loss)); //add
+   // assert(run_test ("2H 2H 2H 5H 5H", "KS AS TS QS JS", Result::Loss)); //add
+  //  assert(run_test ("2H 2H 4H 4H 6H", "KS AS TS QS JS", Result::Loss)); //add
+    assert(run_test ("2H 3H 4H 5H 6H", "KS AS TS QS JS", Result::Loss)); // "Highest straight flush wins"
     assert(run_test ("2H 3H 4H 5H 6H", "AS AD AC AH JD", Result::Win )); // "Straight flush wins of 4 of a kind"
- //   assert(run_test ("2H 3H 4H 5H 6H", "KS AS TS QS JS", Result::Loss)); // "Highest straight flush wins"
+    assert(run_test ("AS AH 2H AD AC", "JS JD JC JH 3D", Result::Win )); // "Highest 4 of a kind wins"
     assert(run_test ("2S AH 2H AS AC", "JS JD JC JH AD", Result::Loss)); // "4 Of a kind wins of full house"
     assert(run_test ("2S AH 2H AS AC", "2H 3H 5H 6H 7H", Result::Win )); // "Full house wins of flush"
-  //  assert(run_test ("AS AH 2H AD AC", "JS JD JC JH 3D", Result::Win )); // "Highest 4 of a kind wins"
-  //  assert(run_test ("AS 3S 4S 8S 2S", "2H 3H 5H 6H 7H", Result::Win )); // "Highest flush wins"
+    assert(run_test ("AS 3S 4S 8S 2S", "2H 3H 5H 6H 7H", Result::Win )); // "Highest flush wins"
     assert(run_test ("2H 3H 5H 6H 7H", "2S 3H 4H 5S 6C", Result::Win )); // "Flush wins of straight"
     assert(run_test ("2S 3H 4H 5S 6C", "3D 4C 5H 6H 2S", Result::Tie )); // "Equal straight is tie"
     assert(run_test ("2S 3H 4H 5S 6C", "AH AC 5H 6H AS", Result::Win )); // "Straight wins of three of a kind"
     assert(run_test ("2S 3H 4H 5S AC", "AH AC 5H 6H AS", Result::Win )); // "Low-ace straight wins of three of a kind"
     assert(run_test ("2S 2H 4H 5S 4C", "AH AC 5H 6H AS", Result::Loss)); // "3 Of a kind wins of two pair"
     assert(run_test ("2S 2H 4H 5S 4C", "AH AC 5H 6H 7S", Result::Win )); // "2 Pair wins of pair"
-  //  assert(run_test ("6S AD 7H 4S AS", "AH AC 5H 6H 7S", Result::Loss)); // "Highest pair wins"
+    assert(run_test ("6S AD 7H 4S AS", "AH AC 5H 6H 7S", Result::Loss)); // "Highest pair wins"
     assert(run_test ("2S AH 4H 5S KC", "AH AC 5H 6H 7S", Result::Loss)); // "Pair wins of nothing"
-  //  assert(run_test ("2S 3H 6H 7S 9C", "7H 3C TH 6H 9S", Result::Loss)); // "Highest card loses"
+    assert(run_test ("2S 3H 6H 7S 9C", "7H 3C TH 6H 9S", Result::Loss)); // "Highest card loses"
     assert(run_test ("4S 5H 6H TS AC", "3S 5H 6H TS AC", Result::Win )); // "Highest card wins"
     assert(run_test ("2S AH 4H 5S 6C", "AD 4C 5H 6H 2C", Result::Tie )); // "Equal cards is tie"
 //  }
