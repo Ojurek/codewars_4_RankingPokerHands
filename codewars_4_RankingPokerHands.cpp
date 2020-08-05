@@ -5,7 +5,7 @@
 
 enum class HandCategories
 {
-  StraightFlush,
+  StraightFlush = 0,
   FourOfKind,
   FullHouse,
   Flush,
@@ -183,10 +183,18 @@ enum class Result
 
 Result compare(const PokerHand &player, const PokerHand &opponent)
 {
-  return Result::Loss;
-}
+  if ((static_cast<int>(player.category)) < (static_cast<int>(opponent.category)))
+  {
+    return Result::Win;
+  }
 
-Result compare(const PokerHand &player, const PokerHand &opponent);
+  if ((static_cast<int>(player.category)) > (static_cast<int>(opponent.category)))
+  {
+    return Result::Loss;
+  }
+
+  return Result::Tie;
+}
 
 bool run_test_hands(const PokerHand &player, const PokerHand &opponent, Result outcome)
 {
