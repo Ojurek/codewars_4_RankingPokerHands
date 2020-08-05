@@ -30,7 +30,7 @@ private:
   HandCategories setCategory();
 
 public:
-  std::array<int, 5> card_corrected;
+  std::array<int, 5> card_sorted_by_group;
   PokerHand(const char *pokerhand)
   {
 
@@ -63,6 +63,8 @@ public:
         flush = false;
       }
     }
+
+    //check straight
     std::sort(card.begin(), card.end(), std::greater<int>());
     for (int i = 0; i < 4; i++)
     {
@@ -72,18 +74,25 @@ public:
         break;
       }
     }
+    //Low-ace straight
+    if (card[0] == 14 && card[1] == 5 && card[2] == 4 && card[3] == 3 && card[4] == 2)
+    {
+      straight = true;
+      card[0] = 1;
+      std::sort(card.begin(), card.end(), std::greater<int>());
+    }
 
     //sort by kind
     for (int i = 0; i < 5; i++)
     {
-      card_corrected[i] = card[i] + kind_count[card[i]] * 100;
+      card_sorted_by_group[i] = card[i] + kind_count[card[i]] * 100;
     }
 
-    std::sort(card_corrected.begin(), card_corrected.end(), std::greater<int>());
+    std::sort(card_sorted_by_group.begin(), card_sorted_by_group.end(), std::greater<int>());
 
     for (int i = 0; i < 5; i++)
     {
-      card_corrected[i] = card_corrected[i] % 100;
+      card_sorted_by_group[i] = card_sorted_by_group[i] % 100;
     }
 
     kind_count_sort = kind_count;
@@ -100,10 +109,10 @@ public:
       std::cout << card[i] << ", ";
     }
     std::cout << std::endl
-              << "card_corrected" << std::endl;
+              << "card_sorted_by_group" << std::endl;
     for (int i = 0; i < 5; i++)
     {
-      std::cout << card_corrected[i] << ", ";
+      std::cout << card_sorted_by_group[i] << ", ";
     }
     std::cout << std::endl
               << "kind_count" << std::endl;
@@ -197,12 +206,12 @@ Result compare(const PokerHand &player, const PokerHand &opponent)
 
   for (int i = 0; i < 5; i++)
   {
-    if (player.card_corrected[i] > opponent.card_corrected[i])
+    if (player.card_sorted_by_group[i] > opponent.card_sorted_by_group[i])
     {
       return Result::Win;
     }
 
-    if (player.card_corrected[i] < opponent.card_corrected[i])
+    if (player.card_sorted_by_group[i] < opponent.card_sorted_by_group[i])
     {
       return Result::Loss;
     }
@@ -244,7 +253,7 @@ int main()
   assert(run_test("2H 3H 5H 6H 7H", "2S 3H 4H 5S 6C", Result::Win));  // "Flush wins of straight"
   assert(run_test("2S 3H 4H 5S 6C", "3D 4C 5H 6H 2S", Result::Tie));  // "Equal straight is tie"
   assert(run_test("2S 3H 4H 5S 6C", "AH AC 5H 6H AS", Result::Win));  // "Straight wins of three of a kind"
-  assert(run_test("2S 3H 4H 5S 6C", "AH AC 5H 6H AS", Result::Win));  // "Low-ace straight wins of three of a kind"
+  assert(run_test("2S 3H 4H 5S AC", "AH AC 5H 6H AS", Result::Win));  // "Low-ace straight wins of three of a kind"
   assert(run_test("2S 2H 4H 5S 4C", "AH AC 5H 6H AS", Result::Loss)); // "3 Of a kind wins of two pair"
   assert(run_test("2S 2H 4H 5S 4C", "AH AC 5H 6H 7S", Result::Win));  // "2 Pair wins of pair"
   assert(run_test("2S AH 4H 5S 6C", "AD 4C 5H 6H 2C", Result::Tie));  // "Equal cards is tie"
