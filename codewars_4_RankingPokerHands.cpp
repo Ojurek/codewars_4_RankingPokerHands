@@ -29,6 +29,7 @@ private:
   std::array<int, 5> card;
   std::array<int, 15> kind_count = {};
   std::array<int, 15> kind_count_sort;
+  std::array<int, 5> card_sorted_by_group;
   int most_numerous_kind;
   int second_numerous_kind;
   bool flush = true;
@@ -37,9 +38,9 @@ private:
   HandCategories setCategory();
 
 public:
-  std::array<int, 5> card_sorted_by_group;
   PokerHand(const char *pokerhand);
   HandCategories getCategory() const;
+  std::array<int, 5> getCard_sorted_by_group() const;
 };
 
 PokerHand::PokerHand(const char *pokerhand)
@@ -113,32 +114,6 @@ PokerHand::PokerHand(const char *pokerhand)
 
   //set category
   category = setCategory();
-  std::cout << std::endl
-            << "card" << std::endl;
-  for (int i = 0; i < 5; i++)
-  {
-    std::cout << card[i] << ", ";
-  }
-  std::cout << std::endl
-            << "card_sorted_by_group" << std::endl;
-  for (int i = 0; i < 5; i++)
-  {
-    std::cout << card_sorted_by_group[i] << ", ";
-  }
-  std::cout << std::endl
-            << "kind_count" << std::endl;
-  for (int i = 0; i < 15; i++)
-  {
-    std::cout << kind_count[i] << ", ";
-  }
-  std::cout << std::endl
-            << "kind_count_sort" << std::endl;
-  for (int i = 0; i < 15; i++)
-  {
-    std::cout << kind_count_sort[i] << ", ";
-  }
-  std::cout << "flush " << flush << std::endl;
-  std::cout << "straight " << straight << std::endl;
 }
 
 HandCategories PokerHand::setCategory()
@@ -195,6 +170,11 @@ HandCategories PokerHand::getCategory() const
   return category;
 }
 
+std::array<int, 5> PokerHand::getCard_sorted_by_group() const
+{
+  return card_sorted_by_group;
+}
+
 Result compare(const PokerHand &player, const PokerHand &opponent)
 {
   if ((static_cast<int>(player.getCategory())) < (static_cast<int>(opponent.getCategory())))
@@ -209,12 +189,12 @@ Result compare(const PokerHand &player, const PokerHand &opponent)
 
   for (int i = 0; i < 5; i++)
   {
-    if (player.card_sorted_by_group[i] > opponent.card_sorted_by_group[i])
+    if (player.getCard_sorted_by_group()[i] > opponent.getCard_sorted_by_group()[i])
     {
       return Result::Win;
     }
 
-    if (player.card_sorted_by_group[i] < opponent.card_sorted_by_group[i])
+    if (player.getCard_sorted_by_group()[i] < opponent.getCard_sorted_by_group()[i])
     {
       return Result::Loss;
     }
@@ -267,4 +247,5 @@ int main()
   assert(run_test("2H 3H 4H 5H 6H", "KS AS TS QS JS", Result::Loss)); // "Highest straight flush wins"
   assert(run_test("AS AH 2H AD AC", "JS JD JC JH 3D", Result::Win));  // "Highest 4 of a kind wins"
   assert(run_test("AS 3S 4S 8S 2S", "2H 3H 5H 6H 7H", Result::Win));  // "Highest flush wins"
+  std::cout << "Passed!" << std::endl;
 }
