@@ -3,6 +3,13 @@
 #include <algorithm>
 #include <iostream>
 
+enum class Result
+{
+  Win,
+  Loss,
+  Tie
+};
+
 enum class HandCategories
 {
   StraightFlush = 0,
@@ -31,113 +38,111 @@ private:
 
 public:
   std::array<int, 5> card_sorted_by_group;
-  PokerHand(const char *pokerhand)
-  {
-
-    for (int i = 0; i < 5; i++)
-    {
-      switch (pokerhand[i * 3])
-      {
-      case 'T':
-        card[i] = 10;
-        break;
-      case 'J':
-        card[i] = 11;
-        break;
-      case 'Q':
-        card[i] = 12;
-        break;
-      case 'K':
-        card[i] = 13;
-        break;
-      case 'A':
-        card[i] = 14;
-        break;
-      default:
-        card[i] = pokerhand[i * 3] - 48;
-        break;
-      }
-      kind_count[card[i]]++;
-      if (pokerhand[1] != pokerhand[i * 3 + 1])
-      {
-        flush = false;
-      }
-    }
-
-    //check straight
-    std::sort(card.begin(), card.end(), std::greater<int>());
-    for (int i = 0; i < 4; i++)
-    {
-      if ((card[i]) != (card[i + 1] + 1))
-      {
-        straight = false;
-        break;
-      }
-    }
-    //Low-ace straight
-    if (card[0] == 14 && card[1] == 5 && card[2] == 4 && card[3] == 3 && card[4] == 2)
-    {
-      straight = true;
-      card[0] = 1;
-      std::sort(card.begin(), card.end(), std::greater<int>());
-    }
-
-    //sort by kind
-    for (int i = 0; i < 5; i++)
-    {
-      card_sorted_by_group[i] = card[i] + kind_count[card[i]] * 100;
-    }
-
-    std::sort(card_sorted_by_group.begin(), card_sorted_by_group.end(), std::greater<int>());
-
-    for (int i = 0; i < 5; i++)
-    {
-      card_sorted_by_group[i] = card_sorted_by_group[i] % 100;
-    }
-
-    kind_count_sort = kind_count;
-    std::sort(kind_count_sort.begin(), kind_count_sort.end(), std::greater<int>());
-    most_numerous_kind = kind_count_sort[0];
-    second_numerous_kind = kind_count_sort[1];
-
-    //set category
-    category = setCategory();
-    std::cout << std::endl
-              << "card" << std::endl;
-    for (int i = 0; i < 5; i++)
-    {
-      std::cout << card[i] << ", ";
-    }
-    std::cout << std::endl
-              << "card_sorted_by_group" << std::endl;
-    for (int i = 0; i < 5; i++)
-    {
-      std::cout << card_sorted_by_group[i] << ", ";
-    }
-    std::cout << std::endl
-              << "kind_count" << std::endl;
-    for (int i = 0; i < 15; i++)
-    {
-      std::cout << kind_count[i] << ", ";
-    }
-    std::cout << std::endl
-              << "kind_count_sort" << std::endl;
-    for (int i = 0; i < 15; i++)
-    {
-      std::cout << kind_count_sort[i] << ", ";
-    }
-    std::cout << "flush " << flush << std::endl;
-    std::cout << "straight " << straight << std::endl;
-  }
-  HandCategories getCategory() const
-  {
-    return category;
-  }
+  PokerHand(const char *pokerhand);
+  HandCategories getCategory() const;
 };
+
+PokerHand::PokerHand(const char *pokerhand)
+{
+
+  for (int i = 0; i < 5; i++)
+  {
+    switch (pokerhand[i * 3])
+    {
+    case 'T':
+      card[i] = 10;
+      break;
+    case 'J':
+      card[i] = 11;
+      break;
+    case 'Q':
+      card[i] = 12;
+      break;
+    case 'K':
+      card[i] = 13;
+      break;
+    case 'A':
+      card[i] = 14;
+      break;
+    default:
+      card[i] = pokerhand[i * 3] - 48;
+      break;
+    }
+    kind_count[card[i]]++;
+    if (pokerhand[1] != pokerhand[i * 3 + 1])
+    {
+      flush = false;
+    }
+  }
+
+  //check straight
+  std::sort(card.begin(), card.end(), std::greater<int>());
+  for (int i = 0; i < 4; i++)
+  {
+    if ((card[i]) != (card[i + 1] + 1))
+    {
+      straight = false;
+      break;
+    }
+  }
+  //Low-ace straight
+  if (card[0] == 14 && card[1] == 5 && card[2] == 4 && card[3] == 3 && card[4] == 2)
+  {
+    straight = true;
+    card[0] = 1;
+    std::sort(card.begin(), card.end(), std::greater<int>());
+  }
+
+  //sort by kind
+  for (int i = 0; i < 5; i++)
+  {
+    card_sorted_by_group[i] = card[i] + kind_count[card[i]] * 100;
+  }
+
+  std::sort(card_sorted_by_group.begin(), card_sorted_by_group.end(), std::greater<int>());
+
+  for (int i = 0; i < 5; i++)
+  {
+    card_sorted_by_group[i] = card_sorted_by_group[i] % 100;
+  }
+
+  kind_count_sort = kind_count;
+  std::sort(kind_count_sort.begin(), kind_count_sort.end(), std::greater<int>());
+  most_numerous_kind = kind_count_sort[0];
+  second_numerous_kind = kind_count_sort[1];
+
+  //set category
+  category = setCategory();
+  std::cout << std::endl
+            << "card" << std::endl;
+  for (int i = 0; i < 5; i++)
+  {
+    std::cout << card[i] << ", ";
+  }
+  std::cout << std::endl
+            << "card_sorted_by_group" << std::endl;
+  for (int i = 0; i < 5; i++)
+  {
+    std::cout << card_sorted_by_group[i] << ", ";
+  }
+  std::cout << std::endl
+            << "kind_count" << std::endl;
+  for (int i = 0; i < 15; i++)
+  {
+    std::cout << kind_count[i] << ", ";
+  }
+  std::cout << std::endl
+            << "kind_count_sort" << std::endl;
+  for (int i = 0; i < 15; i++)
+  {
+    std::cout << kind_count_sort[i] << ", ";
+  }
+  std::cout << "flush " << flush << std::endl;
+  std::cout << "straight " << straight << std::endl;
+}
 
 HandCategories PokerHand::setCategory()
 {
-
   if (most_numerous_kind == 2)
   {
     if (second_numerous_kind == 2)
@@ -185,12 +190,10 @@ HandCategories PokerHand::setCategory()
   return HandCategories::Highcard;
 }
 
-enum class Result
+HandCategories PokerHand::getCategory() const
 {
-  Win,
-  Loss,
-  Tie
-};
+  return category;
+}
 
 Result compare(const PokerHand &player, const PokerHand &opponent)
 {
